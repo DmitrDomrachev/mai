@@ -23,7 +23,6 @@ class SettingLocalStorage implements ISettingLocalDataSource {
 
   @override
   void selectGroup(Group group) {
-    pragma('selectGroup ${group.name}');
     settingBox.put('selected_group', group);
   }
 

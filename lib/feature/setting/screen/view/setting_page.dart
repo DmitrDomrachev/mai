@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mai/assets/colors.dart';
@@ -15,6 +17,7 @@ class SettingPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: false,
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -92,8 +95,8 @@ class SettingScreen extends StatelessWidget {
           );
         }
         return Container(
-          height: double.infinity,
-          color: Colors.red,
+          // height: double.infinity,
+          // color: Colors.red,
         );
       },
     );
@@ -178,27 +181,32 @@ class SavedGroups extends StatelessWidget {
         for (var gr in groups)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(color: colorBorder, width: 1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              leading: Checkbox(
-                shape: const CircleBorder(),
-                value: gr == selectedGroup,
-                onChanged: (bool? value) {
-                  onSelected(gr);
-                },
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.cancel_outlined),
-                onPressed: () {
-                  onDeleted(gr);
-                },
-              ),
-              title: Text(
-                gr.name,
-                style: listItemTitle,
+            child: GestureDetector(
+              onTap: (){
+                log('onTap on $gr');
+                onSelected(gr);
+              },
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(color: colorBorder, width: 1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                leading: Checkbox(
+                  shape: const CircleBorder(),
+                  value: gr == selectedGroup,
+                  onChanged: (bool? value) {
+                  },
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.cancel_outlined),
+                  onPressed: () {
+                    onDeleted(gr);
+                  },
+                ),
+                title: Text(
+                  gr.name,
+                  style: listItemTitle,
+                ),
               ),
             ),
           ),

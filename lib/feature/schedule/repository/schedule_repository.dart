@@ -1,18 +1,35 @@
+import 'dart:developer';
+
 import 'package:mai/feature/schedule/data_provider/i_shedule_data.dart';
 import 'package:mai/feature/schedule/models/models.dart';
 import 'package:mai/feature/setting/models/models.dart';
 
+import '../../utils/data_utils.dart';
+
 abstract class IScheduleRepository {
-  Future<List<Week>> getSchedule(Group group);
+  Future<Schedule> getSchedule(Group group);
 }
 
 class ScheduleRepository extends IScheduleRepository {
   final IScheduleWebDataSource webDataSource;
+  final IScheduleLocalDataSource localDataSource;
 
-  ScheduleRepository({required this.webDataSource});
+  ScheduleRepository(
+      {required this.webDataSource, required this.localDataSource});
 
   @override
-  Future<List<Week>> getSchedule(Group group) async {
-    return await webDataSource.getScheduleByGroup(group);
+  Future<Schedule> getSchedule(Group group) async {
+    final Schedule? localSchedule = localDataSource.getScheduleByGroup(group);
+    if (localSchedule != null &&
+        isOneDay(localSchedule.loadedDate, DateTime.now())) {
+      return localSchedule;
+    }
+
+    final Schedule webSchedule =
+        Schedule.fromLoadedWeeks(await webDataSource.getScheduleByGroup(group));
+
+    localDataSource.saveSchedule(webSchedule, group);
+
+    return webSchedule;
   }
 }

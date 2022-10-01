@@ -5,6 +5,8 @@ abstract class IScheduleWebDataSource {
   Future<List<Week>> getScheduleByGroup(Group group);
 }
 
-abstract class IScheduleLocalDataSource extends IScheduleWebDataSource {
-  Future<void> saveSchedule(List<Week> schedule);
+abstract class IScheduleLocalDataSource {
+  void saveSchedule(Schedule schedule, Group group);
+
+  Schedule? getScheduleByGroup(Group group);
 }

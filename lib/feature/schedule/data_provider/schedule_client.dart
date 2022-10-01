@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:mai/feature/setting/models/models.dart';
 
 import 'package:mai/feature/schedule/data_provider/i_shedule_data.dart';
@@ -11,6 +13,7 @@ class ScheduleClient extends IScheduleWebDataSource {
 
   @override
   Future<List<Week>> getScheduleByGroup(Group group) async {
+    log('getScheduleByGroup from web');
     var url = '/schedule/all/${group.id}';
     dio.options.headers['ApiKey'] = _apiKey;
     final response = await dio.get(_baseUrl + url);

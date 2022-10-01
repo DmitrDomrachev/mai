@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mai/feature/home/cubit/home_cubit.dart';
 
+import '../../schedule/screens/view/schedule_page.dart';
 import '../../setting/screen/view/setting_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -23,56 +25,33 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedTab = context.select((HomeCubit cubit) => cubit.state.tab);
 
-    return Scaffold(
-      body: IndexedStack(
-        index: selectedTab.index,
-        children: [
-          Container(),
-          const SettingPage(),
-
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _HomeTabButton(
-              groupValue: selectedTab,
-              value: HomeTab.schedule,
-              icon: const Icon(Icons.calendar_month),
-            ),
-            _HomeTabButton(
-              groupValue: selectedTab,
-              value: HomeTab.setting,
-              icon: const Icon(Icons.settings),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HomeTabButton extends StatelessWidget {
-  const _HomeTabButton({
-    Key? key,
-    required this.groupValue,
-    required this.value,
-    required this.icon,
-  }) : super(key: key);
-
-  final HomeTab groupValue;
-  final HomeTab value;
-  final Widget icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => context.read<HomeCubit>().setTab(value),
-      iconSize: 32,
-      color:
-          groupValue != value ? null : Theme.of(context).colorScheme.secondary,
-      icon: icon,
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        StatelessWidget contentWidget = Container(
+          color: Colors.green,
+        );
+        if (state.tab == HomeTab.schedule){
+          contentWidget = SchedulePage();
+        }
+        else if (state.tab == HomeTab.setting) {
+          contentWidget = SettingPage();
+        }
+        return Scaffold(
+          body: contentWidget,
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: (index) {
+              context.read<HomeCubit>().setTab(HomeTab.values[index]);
+            },
+            currentIndex: selectedTab.index,
+            items: const [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_month), label: 'Расписание'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings), label: 'Настройки'),
+            ],
+          ),
+        );
+      },
     );
   }
 }
