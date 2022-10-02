@@ -43,6 +43,19 @@ class CalendarCubit extends Cubit<CalendarState> {
     }
   }
 
+  void jumpToDate(DateTime dateTime) {
+    log('calendar cubit selectDate');
+    if (state is CalendarInitial) {
+      final cState = state as CalendarInitial;
+      final index = getWeekIndex(cState.weeks, dateTime);
+      emit(cState.copyWith(selectedDate: dateTime));
+      if (cState.controller.hasClients) {
+        cState.controller.animateToPage(index,
+            duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+      }
+    }
+  }
+
   @override
   void onChange(Change<CalendarState> change) {
     super.onChange(change);

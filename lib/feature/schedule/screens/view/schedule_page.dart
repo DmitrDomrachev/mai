@@ -9,6 +9,7 @@ import 'package:mai/feature/schedule/screens/view/calendar_widget.dart';
 import 'package:mai/feature/search_group/view/search_group_page.dart';
 import 'package:mai/feature/setting/models/group.dart';
 
+import '../../../utils/data_utils.dart';
 import '../cubit/calendar_cubit.dart';
 
 class SchedulePage extends StatelessWidget {
@@ -18,7 +19,14 @@ class SchedulePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SchedulePageBloc()..add(SchedulePageRequestData()),
-      child: const SchedulePageView(),
+      child: BlocListener<SchedulePageBloc, SchedulePageState>(
+        listener: (context, state) {
+          if (state is SchedulePageOldScheduleState) {
+            _showOldScheduleSnack(context);
+          }
+        },
+        child: SchedulePageView(),
+      ),
     );
   }
 }
@@ -45,6 +53,9 @@ class SchedulePageView extends StatelessWidget {
         }
         if (state is SchedulePageLoadedState) {
           return const SchedulePageLoaded();
+        }
+        if (state is SchedulePageLoadingErrorState) {
+          return SchedulePageLoadingError(group: state.group);
         }
         return Container(
           color: Colors.teal,
@@ -144,9 +155,13 @@ class SchedulePageLoaded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<SchedulePageBloc>();
     return BlocBuilder<SchedulePageBloc, SchedulePageState>(
       builder: (context, state) {
         if (state is SchedulePageLoadedState) {
+          // if (!isOneDay(state.schedule.loadedDate, DateTime.now())){
+          //   _showOldScheduleSnack(context);
+          // }
           // log('build schedule ${(state as SchedulePageLoadedState)}');
           return Scaffold(
             backgroundColor: Colors.white,
@@ -157,13 +172,13 @@ class SchedulePageLoaded extends StatelessWidget {
                   onPressed: () async {
                     DateTime? newDate = await showDatePicker(
                         context: context,
-                        initialDate: state.selectedDate,
+                        initialDate:
+                            state.schedule.getDatesMap()[state.pageIndex] ??
+                                DateTime.now(),
                         firstDate: state.schedule.startDate,
                         lastDate: state.schedule.endTime);
                     if (newDate != null) {
-                      context
-                          .read<SchedulePageBloc>()
-                          .add(SchedulePageSelectDay(newDate));
+                      bloc.add(SchedulePageSelectDay(newDate));
                     }
                   },
                   icon: const Icon(Icons.calendar_month),
@@ -182,7 +197,7 @@ class SchedulePageLoaded extends StatelessWidget {
                 CalendarWidget(
                   startDate: state.schedule.startDate,
                   endDate: state.schedule.endTime,
-                  selectedDateTime: state.selectedDate,
+                  selectedDateTime: DateTime.now(),
                   currentDateTime: DateTime.now(),
                   onDaySelected: (day) {
                     context
@@ -191,8 +206,20 @@ class SchedulePageLoaded extends StatelessWidget {
                   },
                 ),
                 Expanded(
-                  child: ScheduleDaySchedule(
-                    day: state.schedule.getDaySchedule(state.selectedDate),
+                  child: PageView.builder(
+                    onPageChanged: (index) {
+                      context
+                          .read<SchedulePageBloc>()
+                          .add(SchedulePageSwipe(index));
+                    },
+                    controller: state.controller,
+                    itemCount: state.schedule.getSchedulePageCount(),
+                    itemBuilder: (context, index) {
+                      return ScheduleDaySchedule(
+                        day: state.schedule.getDaySchedule(
+                            state.schedule.getDatesMap()[index]),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -246,7 +273,9 @@ class SchedulePageNoGroup extends StatelessWidget {
                   // context.read<SettingPageCubit>().init();
                   Navigator.of(context).push(MaterialPageRoute(builder: (_) {
                     return const SearchGroupPage();
-                  })).then((value) => context.read<SchedulePageBloc>().add(SchedulePageRequestData()));
+                  })).then((value) => context
+                      .read<SchedulePageBloc>()
+                      .add(SchedulePageRequestData()));
                   // onAddGroup(context);
                 },
                 child: const Text('Добавить группу'),
@@ -280,4 +309,61 @@ class SchedulePageLoading extends StatelessWidget {
       ),
     );
   }
+}
+
+class SchedulePageLoadingError extends StatelessWidget {
+  const SchedulePageLoadingError({Key? key, required this.group})
+      : super(key: key);
+  final Group group;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          centerTitle: false,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Text(
+            group.name,
+            style: listItemTitle,
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Произошла ошибка при загрузке расписание.'),
+              const SizedBox(
+                height: 16,
+              ),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    side: const BorderSide(color: colorPrimary),
+                    minimumSize: const Size.fromHeight(50)),
+                onPressed: () {
+                  context
+                      .read<SchedulePageBloc>()
+                      .add(SchedulePageRequestData());
+                },
+                child: const Text('Повторить попытку'),
+              )
+            ],
+          ),
+        ));
+  }
+}
+
+void _showOldScheduleSnack(BuildContext context) {
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      const SnackBar(
+        content: Text('Расписание не было обновлено'),
+      ),
+    );
 }

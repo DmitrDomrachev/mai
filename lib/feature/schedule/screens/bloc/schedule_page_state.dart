@@ -14,6 +14,12 @@ class SchedulePageNoGroupState extends SchedulePageState {
   List<Object> get props => [];
 }
 
+class SchedulePageOldScheduleState extends SchedulePageState {
+  @override
+  List<Object> get props => [];
+}
+
+
 class SchedulePageLoadingState extends SchedulePageState {
   final Group group;
 
@@ -23,33 +29,55 @@ class SchedulePageLoadingState extends SchedulePageState {
   List<Object> get props => [group];
 }
 
+class SchedulePageLoadingErrorState extends SchedulePageState {
+  final Group group;
+
+  const SchedulePageLoadingErrorState(this.group);
+
+  @override
+  List<Object> get props => [group];
+}
+
 class SchedulePageLoadedState extends SchedulePageState {
   final Group group;
   final Schedule schedule;
-  final DateTime selectedDate;
+  // final DateTime selectedDate;
+  final PageController controller;
+  final int pageIndex;
+
+  // final Map<int, DateTime> datesMap;
 
   const SchedulePageLoadedState({
     required this.group,
     required this.schedule,
-    required this.selectedDate,
+    // required this.selectedDate,
+    required this.controller,
+    required this.pageIndex,
+    // required this.datesMap
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props =>
+      [
         group,
         schedule,
-        selectedDate,
+        controller,
+        pageIndex,
       ];
 
   SchedulePageLoadedState copyWith({
     Group? group,
     Schedule? schedule,
     DateTime? selectedDate,
+    PageController? controller,
+    int? pageIndex,
   }) {
     return SchedulePageLoadedState(
       group: group ?? this.group,
       schedule: schedule ?? this.schedule,
-      selectedDate: selectedDate ?? this.selectedDate,
+      // selectedDate: selectedDate ?? this.selectedDate,
+      controller: controller ?? this.controller,
+      pageIndex: pageIndex ?? this.pageIndex,
     );
   }
 }

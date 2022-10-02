@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mai/assets/assets.dart';
@@ -34,8 +36,10 @@ class CalendarWidget extends StatelessWidget {
           onDaySelected: onDaySelected),
       child: BlocBuilder<SchedulePageBloc, SchedulePageState>(
         builder: (context, stateParent) {
-          context.read<CalendarCubit>().selectDate(
-              (stateParent as SchedulePageLoadedState).selectedDate);
+          final index = (stateParent as SchedulePageLoadedState).pageIndex;
+          final selectedDate = (stateParent as SchedulePageLoadedState).schedule.getDatesMap()[index];
+          log('calendar selectedDate $selectedDate');
+          context.read<CalendarCubit>().jumpToDate(selectedDate?? DateTime.now());
           return BlocBuilder<CalendarCubit, CalendarState>(
             builder: (context, state) {
               if (state is CalendarInitial) {

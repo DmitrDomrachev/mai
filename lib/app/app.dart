@@ -8,12 +8,12 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate
-        ],
-        supportedLocales: [
-          const Locale('ru'),
-        ],
+        // localizationsDelegates: [
+        //   GlobalMaterialLocalizations.delegate
+        // ],
+        // supportedLocales: [
+        //   const Locale('ru'),
+        // ],
       home: HomePage(),
     );
   }

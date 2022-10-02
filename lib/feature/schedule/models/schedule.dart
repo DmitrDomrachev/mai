@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +32,10 @@ class Schedule {
     return Schedule(loadedDate, weeks, startDate, endDate);
   }
 
-  Day? getDaySchedule(DateTime dateTime) {
+  Day? getDaySchedule(DateTime? dateTime) {
+    if (dateTime == null){
+      return null;
+    }
     for (var week in _weeks) {
       if ((week.date.startDate.isAtSameMomentAs(dateTime)) ||
           (week.date.endDate.isAtSameMomentAs(dateTime)) ||
@@ -46,6 +50,36 @@ class Schedule {
     }
     return null;
   }
+
+  int getSchedulePageCount() {
+    return _weeks.length * 7;
+  }
+
+  Map<int, DateTime> getDatesMap() {
+    var map = Map<int, DateTime>();
+    var date = _weeks.first.date.startDate;
+
+    for (int i = 0; i < getSchedulePageCount(); i++) {
+      map[i] = date;
+      date = date.add(const Duration(days: 1));
+    }
+    // log('getDatesMap $map');
+    return map;
+  }
+
+  Map<DateTime, int> getIndexMap() {
+    var map = Map<DateTime, int>();
+    var date = _weeks.first.date.startDate;
+
+    for (int i = 0; i < getSchedulePageCount(); i++) {
+      map[date] = i;
+      date = date.add(const Duration(days: 1));
+    }
+    // log('getIndexMap $map');
+    return map;
+  }
+
+
 
 }
 
@@ -114,6 +148,12 @@ class WeekDate {
   @override
   String toString() {
     return 'WeekDate{startDate: ${startDate.day}.${startDate.month}, endDate: ${endDate.day}.${endDate.month}}';
+  }
+
+  bool isDayInWeek(DateTime dateTime) {
+    return dateTime.isAtSameMomentAs(startDate) ||
+        dateTime.isAtSameMomentAs(endDate) ||
+        (dateTime.isAfter(startDate) && dateTime.isBefore(endDate));
   }
 }
 

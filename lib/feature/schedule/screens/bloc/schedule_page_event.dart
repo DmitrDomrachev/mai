@@ -18,5 +18,11 @@ class SchedulePageSelectDay extends SchedulePageEvent {
   List<Object?> get props => [selectedDay];
 }
 
+class SchedulePageSwipe extends SchedulePageEvent {
+  final int pageIndex;
 
+  const SchedulePageSwipe(this.pageIndex);
 
+  @override
+  List<Object?> get props => [pageIndex];
+}
