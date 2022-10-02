@@ -19,7 +19,7 @@ class SettingPageInitial extends SettingPageState {
   }) {
     return SettingPageInitial(
       groups: groups ?? this.groups,
-      selectedGroup: selectedGroup ?? this.selectedGroup,
+      selectedGroup: selectedGroup,
     );
   }
 }

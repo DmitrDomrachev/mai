@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mai/feature/home/cubit/home_cubit.dart';
+import 'package:mai/feature/info/screens/info_page.dart';
 
 import '../../schedule/screens/view/schedule_page.dart';
 import '../../setting/screen/view/setting_page.dart';
+import '../../info/screens/map/campus_scheme_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -33,8 +35,11 @@ class HomeView extends StatelessWidget {
         if (state.tab == HomeTab.schedule){
           contentWidget = SchedulePage();
         }
-        else if (state.tab == HomeTab.setting) {
+        if (state.tab == HomeTab.setting) {
           contentWidget = SettingPage();
+        }
+        if (state.tab == HomeTab.info) {
+          contentWidget = InfoPage();
         }
         return Scaffold(
           body: contentWidget,
@@ -44,6 +49,8 @@ class HomeView extends StatelessWidget {
             },
             currentIndex: selectedTab.index,
             items: const [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.info_outline), label: 'Инфо'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.calendar_month), label: 'Расписание'),
               BottomNavigationBarItem(

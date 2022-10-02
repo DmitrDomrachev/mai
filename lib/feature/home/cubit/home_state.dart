@@ -1,6 +1,6 @@
 part of 'home_cubit.dart';
 
-enum HomeTab { schedule, setting }
+enum HomeTab { info, schedule, setting }
 
 class HomeState extends Equatable {
   final HomeTab tab;

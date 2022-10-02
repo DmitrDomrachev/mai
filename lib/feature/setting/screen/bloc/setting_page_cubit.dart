@@ -55,6 +55,5 @@ void deleteGroup(Group group) {
   @override
   void onChange(Change<SettingPageState> change) {
     super.onChange(change);
-    // log('onChange SettingPageState $change');
   }
 }

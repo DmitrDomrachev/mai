@@ -363,7 +363,7 @@ void _showOldScheduleSnack(BuildContext context) {
     ..hideCurrentSnackBar()
     ..showSnackBar(
       const SnackBar(
-        content: Text('Расписание не было обновлено'),
+        content: Text('Произошла ошибка при обновлении расписания. Показана последняя сохраненная версия. '),
       ),
     );
 }

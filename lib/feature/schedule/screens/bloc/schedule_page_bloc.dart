@@ -46,7 +46,6 @@ class SchedulePageBloc extends Bloc<SchedulePageEvent, SchedulePageState> {
     } on ScheduleUpdateException catch (exception) {
       log(exception.toString());
       if (exception.oldSchedule == null) {
-        log('emit SchedulePageLoadingErrorState');
         emit(SchedulePageLoadingErrorState(selectedGroup));
         return;
       }
@@ -82,7 +81,6 @@ class SchedulePageBloc extends Bloc<SchedulePageEvent, SchedulePageState> {
         cState.controller.jumpToPage(pageIndex);
         emit(cState.copyWith(pageIndex: pageIndex));
       }
-      // emit(cState.copyWith(selectedDate: event.selectedDay));
     }
   }
 

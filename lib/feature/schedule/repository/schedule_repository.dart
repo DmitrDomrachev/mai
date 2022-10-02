@@ -26,7 +26,7 @@ class ScheduleRepository extends IScheduleRepository {
         isOneDay(localSchedule.loadedDate, DateTime.now())) {
       return localSchedule;
     }
-    
+
     try {
       final Schedule webSchedule = Schedule.fromLoadedWeeks(
           await webDataSource.getScheduleByGroup(group));

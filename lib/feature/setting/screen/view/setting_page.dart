@@ -37,21 +37,19 @@ class SettingPage extends StatelessWidget {
           cubit.init();
           return cubit;
         },
-        child: Builder(
-            builder: (context) {
-              return BlocListener<SettingPageCubit, SettingPageState>(
-                listener: (context, state) {
-                  if(state is SettingPageAddGroup) {
-                    context.read<SettingPageCubit>().init();
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                      return const SearchGroupPage();
-                    })).then((value) => context.read<SettingPageCubit>().init());
-                  }
-                },
-                child: const SettingScreen(),
-              );
-            }
-        ),
+        child: Builder(builder: (context) {
+          return BlocListener<SettingPageCubit, SettingPageState>(
+            listener: (context, state) {
+              if (state is SettingPageAddGroup) {
+                context.read<SettingPageCubit>().init();
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                  return const SearchGroupPage();
+                })).then((value) => context.read<SettingPageCubit>().init());
+              }
+            },
+            child: const SettingScreen(),
+          );
+        }),
       ),
     );
   }
@@ -95,9 +93,9 @@ class SettingScreen extends StatelessWidget {
           );
         }
         return Container(
-          // height: double.infinity,
-          // color: Colors.red,
-        );
+            // height: double.infinity,
+            // color: Colors.red,
+            );
       },
     );
   }
@@ -121,35 +119,35 @@ class SelectedGroup extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: group != null
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              group?.name ?? '',
-              style: headline5OnBg,
-            ),
-            Text(
-              group?.fac ?? '',
-              style: subtitle1OnBg,
-            ),
-            Text(
-              group?.level ?? '',
-              style: subtitle1OnBg,
-            ),
-            Text(
-              '${group?.course.toString()} курс',
-              style: subtitle1OnBg,
-            ),
-          ],
-        )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    group?.name ?? '',
+                    style: headline5OnBg,
+                  ),
+                  Text(
+                    group?.fac ?? '',
+                    style: subtitle1OnBg,
+                  ),
+                  Text(
+                    group?.level ?? '',
+                    style: subtitle1OnBg,
+                  ),
+                  Text(
+                    '${group?.course.toString()} курс',
+                    style: subtitle1OnBg,
+                  ),
+                ],
+              )
             : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              'Группа не выбрана',
-              style: headline5OnBg,
-            )
-          ],
-        ));
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    'Группа не выбрана',
+                    style: headline5OnBg,
+                  )
+                ],
+              ));
   }
 }
 
@@ -181,8 +179,8 @@ class SavedGroups extends StatelessWidget {
         for (var gr in groups)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: GestureDetector(
-              onTap: (){
+            child: InkWell(
+              onTap: () {
                 log('onTap on $gr');
                 onSelected(gr);
               },
@@ -194,8 +192,7 @@ class SavedGroups extends StatelessWidget {
                 leading: Checkbox(
                   shape: const CircleBorder(),
                   value: gr == selectedGroup,
-                  onChanged: (bool? value) {
-                  },
+                  onChanged: (_) {},
                 ),
                 trailing: IconButton(
                   icon: const Icon(Icons.cancel_outlined),
